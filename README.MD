@@ -7,8 +7,9 @@
 - ExpressJS(4.16.1) framework
 
 ## Run locally
-- npm install
-- npm run start
+- Rename sample.env to .env in the root of the project 
+- Run: `npm install`
+- Run: `npm run start`
 
 ## Project Overview
 [Fillout.com](http://Fillout.com) is a powerful form builder, which stores responses to your online form submissions. Create a simple REST API server which interacts with [Fillout.com’s API](https://www.fillout.com/help/fillout-rest-api)  to fetch form responses, but with an option to filter based on certain answers. 
@@ -16,12 +17,12 @@
 Use the following API key to fetch responses from a demo account Fillout set up: `sk_prod_TfMbARhdgues5AuIosvvdAC9WsA5kXiZlW8HZPaRDlIbCpSpLsXBeZO7dCVZQwHAY3P4VSBPiiC33poZ1tdUj2ljOzdTCCOSpUZ_3912`, with this demo form ID: `cLZojxk94ous`
 
 ### Server specifications
-Your server only needs to implement one endpoint, for fetching responses from a form, but with filters. Your endpoint should mirror the [existing responses endpoint of our API](https://www.fillout.com/help/fillout-rest-api#d8b24260dddd4aaa955f85e54f4ddb4d), except will have a new parameter for filtering.
+Your server only needs to implement one endpoint, for fetching responses from a form, but with filters. Your endpoint should mirror the [existing responses endpoint of Fillout API](https://www.fillout.com/help/fillout-rest-api#d8b24260dddd4aaa955f85e54f4ddb4d), except will have a new parameter for filtering.
 
 #### Request:
 - Path: `/{formId}/filteredResponses`
 - Method: `GET`
-- Query parameters: same as our [responses endpoint](https://www.fillout.com/help/fillout-rest-api#d8b24260dddd4aaa955f85e54f4ddb4d), except for a new `filters` parameter (JSON stringified):
+- Query parameters: same as Fillout's [responses endpoint](https://www.fillout.com/help/fillout-rest-api#d8b24260dddd4aaa955f85e54f4ddb4d), except for a new `filters` parameter (JSON stringified):
 ```tsx
 type FilterClauseType = {
 	id: string;
@@ -88,4 +89,4 @@ Given a sample list of responses like this (this response doesn’t match the on
 ```
 
 #### Output:
-No responses are returned, because even though `Timmy` matches the name, but the birthday is not greater than the one in our filter.
+No responses are returned, because even though `Timmy` matches the name, but the birthday is not greater than the one in Example filter.
