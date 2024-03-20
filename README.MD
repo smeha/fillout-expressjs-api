@@ -1,6 +1,3 @@
-* TOC
-{:toc}
-
 # Fillout API application
 
 ## Tech Stack used
@@ -14,19 +11,24 @@
 - Run: `npm install`
 - Run: `npm run start`
 
+
 - For debugging logs, edit `.env` file and set APPLICATION_DEBUG_OPTION to 1
 
 ## Testing
 ### CURL test local API with implemented filters
 - Filtering for:
   - "How many employees work under you?" ->
-  ```Filter ID:  fFnyxwWa3KV6nBdfBDCHEA
+```
+Filter ID:  fFnyxwWa3KV6nBdfBDCHEA
 Condition:  less_than
-Filter Value:  3```
+Filter Value:  3
+```
   - "What is your name?" ->
-  ```Filter ID:  bE2Bo4cGUv49cjnqZ4UnkW
+```Filter ID:  bE2Bo4cGUv49cjnqZ4UnkW
 Condition:  does_not_equal
-Filter Value:  Billy```
+Filter Value:  Billy
+```
+
 - Filter paramaeters(need to be encoded): `[{ "id": "bE2Bo4cGUv49cjnqZ4UnkW", "condition": "does_not_equal", "value": "Billy"},{ "id": "fFnyxwWa3KV6nBdfBDCHEA", "condition": "less_than", "value": "3"}]`
 
 ```bash
