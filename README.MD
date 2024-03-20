@@ -1,3 +1,6 @@
+* TOC
+{:toc}
+
 # Fillout API application
 
 ## Tech Stack used
@@ -7,9 +10,38 @@
 - ExpressJS(4.16.1) framework
 
 ## Run locally
-- Rename sample.env to .env in the root of the project 
+- Rename `sample.env` to `.env` in the root of the project
 - Run: `npm install`
 - Run: `npm run start`
+
+- For debugging logs, edit `.env` file and set APPLICATION_DEBUG_OPTION to 1
+
+## Testing
+### CURL test local API with implemented filters
+- Filtering for:
+  - "How many employees work under you?" ->
+  ```Filter ID:  fFnyxwWa3KV6nBdfBDCHEA
+Condition:  less_than
+Filter Value:  3```
+  - "What is your name?" ->
+  ```Filter ID:  bE2Bo4cGUv49cjnqZ4UnkW
+Condition:  does_not_equal
+Filter Value:  Billy```
+- Filter paramaeters(need to be encoded): `[{ "id": "bE2Bo4cGUv49cjnqZ4UnkW", "condition": "does_not_equal", "value": "Billy"},{ "id": "fFnyxwWa3KV6nBdfBDCHEA", "condition": "less_than", "value": "3"}]`
+
+```bash
+ curl --header "Content-Type: application/json" \
+  --request GET \
+    "http://localhost:3000/cLZojxk94ous/filteredResponse?filters=%5B%7B%20%22id%22%3A%20%22bE2Bo4cGUv49cjnqZ4UnkW%22%2C%20%22condition%22%3A%20%22does_not_equal%22%2C%20%22value%22%3A%20%22Billy%22%7D%2C%7B%20%22id%22%3A%20%22fFnyxwWa3KV6nBdfBDCHEA%22%2C%20%22condition%22%3A%20%22less_than%22%2C%20%22value%22%3A%20%223%22%7D%5D"
+```
+
+### CURL test Fillout API endpoint
+```bash
+ curl --header "Content-Type: application/json" \
+  --header "Authorization: Bearer sk_prod_TfMbARhdgues5AuIosvvdAC9WsA5kXiZlW8HZPaRDlIbCpSpLsXBeZO7dCVZQwHAY3P4VSBPiiC33poZ1tdUj2ljOzdTCCOSpUZ_3912" \
+  --request GET \
+  https://api.fillout.com/v1/api/forms/cLZojxk94ous/submissions?limit=1
+```
 
 ## Project Overview
 [Fillout.com](http://Fillout.com) is a powerful form builder, which stores responses to your online form submissions. Create a simple REST API server which interacts with [Fillout.com’s API](https://www.fillout.com/help/fillout-rest-api)  to fetch form responses, but with an option to filter based on certain answers. 
