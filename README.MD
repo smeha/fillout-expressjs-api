@@ -1,17 +1,26 @@
 # Fillout API application
-
-## Tech Stack used
-- Tested on MacOS Monterey (v12.7.2)
-- NodeJS (v21.7.1)
-- Node Package Manager (npm v10.5.0)
-- ExpressJS(4.16.1) framework
+## Tech Stack
+- NodeJS (v24.14)
+- ExpressJS (v5.2.1)
+- Pug template engine
 
 ## Run locally
-- Rename `sample.env` to `.env` in the root of the project
-- Run: `npm install`
-- Run: `npm run start`
+### Install dependencies
+```bash
+npm install
+```
 
+### Setup environment variables
+```bash
+cp .env.example .env
+```
 
+### Run the project
+```bash
+npm run start
+```
+
+### Debug the project
 - For debugging logs, edit `.env` file and set APPLICATION_DEBUG_OPTION to 1
 
 ## Testing

@@ -33,7 +33,14 @@ router.get('/:formId/filteredResponse', function(req, res) {
     if (debug_opt == 1) console.log("DEBUG Final Fillout API URL: " + filloutApiUrl);
 
     // Parsing out filters from the request
-    var parsedFilters = req.query.filters ? JSON.parse(req.query.filters) : '';
+    var parsedFilters = '';
+    if (req.query.filters) {
+        try {
+            parsedFilters = JSON.parse(req.query.filters);
+        } catch (error) {
+            return res.status(400).json({ error: 'Invalid filters JSON' });
+        }
+    }
     if (debug_opt == 1 && parsedFilters) console.log("DEBUG filters if exist:  ", parsedFilters);
 
     // Fetching submissions from Fillout API
@@ -59,33 +66,73 @@ router.get('/:formId/filteredResponse', function(req, res) {
 
 // Logic for filtering
 const filterResponses = (responses, filters) => {
-    return responses.responses.filter((response) => {
+    var filteredEntries = responses.responses.filter((response) => {
         if (debug_opt == 1) console.log("DEBUG Single response being tested against filter:\n", response);
-        let flagged = true;
-        filters.forEach((filter) => {
-            if (flagged == false) return false;
+        return filters.every((filter) => {
             const question = response.questions.find((q) => q.id === filter.id);
-            if (!question) return false;
+            if (!question) {
+                return false;
+            }
+
             if (debug_opt == 1) console.log('DEBUG Question/Filter ID: ', question.id, '/',filter.id, '\nDEBUG Condition: ',filter.condition,'\nDEBUG Question/Filter Value: ', question.value, '/',filter.value, '\n');
             switch (filter.condition) {
                 case 'equals':
-                    flagged = question.value == filter.value;
-                    return flagged;
+                    return compareValues(question.value, filter.value) === 0;
                 case 'does_not_equal':
-                    flagged = question.value != filter.value;
-                    return flagged;
+                    return compareValues(question.value, filter.value) !== 0;
                 case 'greater_than':
-                    flagged = question.value > filter.value;
-                    return flagged;
+                    return compareValues(question.value, filter.value) > 0;
                 case 'less_than':
-                    flagged = question.value < filter.value;
-                    return flagged;
+                    return compareValues(question.value, filter.value) < 0;
                 default:
                     return false;
             }
         });
-        return flagged;
     });
+
+    return {
+        ...responses,
+        responses: filteredEntries,
+        totalResponses: filteredEntries.length,
+        pageCount: filteredEntries.length
+    };
+};
+
+const compareValues = (leftValue, rightValue) => {
+    var leftComparable = normalizeComparableValue(leftValue);
+    var rightComparable = normalizeComparableValue(rightValue);
+
+    if (leftComparable < rightComparable) {
+        return -1;
+    }
+
+    if (leftComparable > rightComparable) {
+        return 1;
+    }
+
+    return 0;
+};
+
+const normalizeComparableValue = (value) => {
+    if (typeof value === 'number') {
+        return value;
+    }
+
+    if (typeof value !== 'string') {
+        return value;
+    }
+
+    var trimmedValue = value.trim();
+    if (trimmedValue !== '' && Number.isFinite(Number(trimmedValue))) {
+        return Number(trimmedValue);
+    }
+
+    var parsedDate = Date.parse(trimmedValue);
+    if (!Number.isNaN(parsedDate)) {
+        return parsedDate;
+    }
+
+    return trimmedValue;
 };
 
 // Start the ExpressJS server
