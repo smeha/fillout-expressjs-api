@@ -55,14 +55,14 @@ Filter Value:  Billy
 **CURL final result to test:**
 
 ```bash
- curl --header "Content-Type: application/json" \
+curl --header "Content-Type: application/json" \
   --request GET \
     "http://localhost:3000/cLZojxk94ous/filteredResponses?filters=%5B%7B%20%22id%22%3A%20%22bE2Bo4cGUv49cjnqZ4UnkW%22%2C%20%22condition%22%3A%20%22does_not_equal%22%2C%20%22value%22%3A%20%22Billy%22%7D%2C%7B%20%22id%22%3A%20%22fFnyxwWa3KV6nBdfBDCHEA%22%2C%20%22condition%22%3A%20%22less_than%22%2C%20%22value%22%3A%20%223%22%7D%5D"
 ```
 
 ### CURL test Fillout API endpoint
 ```bash
- curl --header "Content-Type: application/json" \
+curl --header "Content-Type: application/json" \
   --header "Authorization: Bearer sk_prod_TfMbARhdgues5AuIosvvdAC9WsA5kXiZlW8HZPaRDlIbCpSpLsXBeZO7dCVZQwHAY3P4VSBPiiC33poZ1tdUj2ljOzdTCCOSpUZ_3912" \
   --request GET \
   https://api.fillout.com/v1/api/forms/cLZojxk94ous/submissions?limit=1
