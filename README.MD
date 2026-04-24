@@ -23,6 +23,17 @@ npm run start
 ### Debug the project
 - For debugging logs, edit `.env` file and set APPLICATION_DEBUG_OPTION to 1
 
+## Linting, tests, type checking and audits
+## Application tests
+```bash
+npm test
+```
+
+## Application audits
+```bash
+npm run audit
+```
+
 ## Testing
 ### CURL test local API with implemented filters
 
@@ -46,7 +57,7 @@ Filter Value:  Billy
 ```bash
  curl --header "Content-Type: application/json" \
   --request GET \
-    "http://localhost:3000/cLZojxk94ous/filteredResponse?filters=%5B%7B%20%22id%22%3A%20%22bE2Bo4cGUv49cjnqZ4UnkW%22%2C%20%22condition%22%3A%20%22does_not_equal%22%2C%20%22value%22%3A%20%22Billy%22%7D%2C%7B%20%22id%22%3A%20%22fFnyxwWa3KV6nBdfBDCHEA%22%2C%20%22condition%22%3A%20%22less_than%22%2C%20%22value%22%3A%20%223%22%7D%5D"
+    "http://localhost:3000/cLZojxk94ous/filteredResponses?filters=%5B%7B%20%22id%22%3A%20%22bE2Bo4cGUv49cjnqZ4UnkW%22%2C%20%22condition%22%3A%20%22does_not_equal%22%2C%20%22value%22%3A%20%22Billy%22%7D%2C%7B%20%22id%22%3A%20%22fFnyxwWa3KV6nBdfBDCHEA%22%2C%20%22condition%22%3A%20%22less_than%22%2C%20%22value%22%3A%20%223%22%7D%5D"
 ```
 
 ### CURL test Fillout API endpoint

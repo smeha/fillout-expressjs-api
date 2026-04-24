@@ -2,13 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 // Debuging options
-var debug_opt = 0; // 1 - for showing console logs, 0 - OFF
+var debug_opt = Number(process.env.APPLICATION_DEBUG_OPTION) === 1 ? 1 : 0; // 1 - for showing console logs, 0 - OFF
 
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Fillout API application' });
 });
 
-router.get('/:formId/filteredResponse', function(req, res) {
+const handleFilteredResponses = function(req, res) {
     // Debug logging
     if (debug_opt == 1) console.log("DEBUG log all params: ", req.params);
     if (debug_opt == 1) console.log("DEBUG log all queries: ", req.query);
@@ -62,7 +62,10 @@ router.get('/:formId/filteredResponse', function(req, res) {
         console.error('Error retrieving data:', error);
         res.status(500).send('Error retrieving data');
     });
-});
+};
+
+router.get('/:formId/filteredResponses', handleFilteredResponses);
+router.get('/:formId/filteredResponse', handleFilteredResponses);
 
 // Logic for filtering
 const filterResponses = (responses, filters) => {
@@ -77,9 +80,9 @@ const filterResponses = (responses, filters) => {
             if (debug_opt == 1) console.log('DEBUG Question/Filter ID: ', question.id, '/',filter.id, '\nDEBUG Condition: ',filter.condition,'\nDEBUG Question/Filter Value: ', question.value, '/',filter.value, '\n');
             switch (filter.condition) {
                 case 'equals':
-                    return compareValues(question.value, filter.value) === 0;
+                    return areEqualValues(question.value, filter.value);
                 case 'does_not_equal':
-                    return compareValues(question.value, filter.value) !== 0;
+                    return !areEqualValues(question.value, filter.value);
                 case 'greater_than':
                     return compareValues(question.value, filter.value) > 0;
                 case 'less_than':
@@ -98,9 +101,23 @@ const filterResponses = (responses, filters) => {
     };
 };
 
+const areEqualValues = (leftValue, rightValue) => {
+    if (leftValue === null || leftValue === undefined || rightValue === null || rightValue === undefined) {
+        return leftValue === rightValue;
+    }
+
+    var comparisonOperands = normalizeComparisonOperands(leftValue, rightValue);
+    return comparisonOperands.left === comparisonOperands.right;
+};
+
 const compareValues = (leftValue, rightValue) => {
-    var leftComparable = normalizeComparableValue(leftValue);
-    var rightComparable = normalizeComparableValue(rightValue);
+    if (leftValue === null || leftValue === undefined || rightValue === null || rightValue === undefined) {
+        return null;
+    }
+
+    var comparisonOperands = normalizeComparisonOperands(leftValue, rightValue);
+    var leftComparable = comparisonOperands.left;
+    var rightComparable = comparisonOperands.right;
 
     if (leftComparable < rightComparable) {
         return -1;
@@ -113,27 +130,47 @@ const compareValues = (leftValue, rightValue) => {
     return 0;
 };
 
-const normalizeComparableValue = (value) => {
+const normalizeComparisonOperands = (leftValue, rightValue) => {
+    if (isFiniteNumberValue(leftValue) && isFiniteNumberValue(rightValue)) {
+        return {
+            left: Number(leftValue),
+            right: Number(rightValue)
+        };
+    }
+
+    if (isDateValue(leftValue) && isDateValue(rightValue)) {
+        return {
+            left: Date.parse(leftValue),
+            right: Date.parse(rightValue)
+        };
+    }
+
+    return {
+        left: String(leftValue),
+        right: String(rightValue)
+    };
+};
+
+const isFiniteNumberValue = (value) => {
     if (typeof value === 'number') {
-        return value;
+        return Number.isFinite(value);
     }
 
     if (typeof value !== 'string') {
-        return value;
+        return false;
     }
 
     var trimmedValue = value.trim();
-    if (trimmedValue !== '' && Number.isFinite(Number(trimmedValue))) {
-        return Number(trimmedValue);
-    }
+    return trimmedValue !== '' && Number.isFinite(Number(trimmedValue));
+};
 
-    var parsedDate = Date.parse(trimmedValue);
-    if (!Number.isNaN(parsedDate)) {
-        return parsedDate;
-    }
-
-    return trimmedValue;
+const isDateValue = (value) => {
+    return typeof value === 'string' && value.trim() !== '' && !Number.isNaN(Date.parse(value));
 };
 
 // Start the ExpressJS server
 module.exports = router;
+module.exports.filterResponses = filterResponses;
+module.exports.compareValues = compareValues;
+module.exports.areEqualValues = areEqualValues;
+module.exports.handleFilteredResponses = handleFilteredResponses;
